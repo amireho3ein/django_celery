@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  django:
+    container_name: django
+    build:
+      context: .
+    command: python3 manage.py runserver 
+    volumes:
+      - ./core:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.envsample
+
+
+  redis:
+    image: redis:7.0.11-alpine
+    ports:
+      - "6379:6379"  # Expose Redis port to the host machine
+
+
+  celery:
+    container_name: celery
+    restart: always
+    build:
+      context: ./core
+    command: celery --app=core worker -l INFO -B
+    volumes:
+      - ./core:/usr/src/app/
+    env_file:
+      - ./.envsample
