@@ -1,17 +1,20 @@
-FROM python:3.10.12-alpine
+FROM python:3.10-slim-buster
+
 
 WORKDIR /usr/src/app
 
-# prevent Python from writing .pyc files
-ENV PYTHONDONTWRITEBYTECODE 1
+
 # ensure Python output is sent directly to the terminal without buffering
 ENV PYTHONUNBUFFERED 1
+ENV DOCKER_BUILDKIT=1
+ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+
 COPY . /usr/src/app/
 
-ENTRYPOINT ["app/entrypoint.sh"]
+EXPOSE 8000
+EXPOSE 6379
